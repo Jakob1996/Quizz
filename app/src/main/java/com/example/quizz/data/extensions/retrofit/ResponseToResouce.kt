@@ -27,4 +27,3 @@ fun <T> Response<T>.toResource(): Resource<T> =
             Resource.error<T>(ResourceError.GenericError)
         }
     }
-
