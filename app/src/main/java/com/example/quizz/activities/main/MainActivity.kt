@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val vanController = rememberNavController()
+                    val nanController = rememberNavController()
                     NavigationComponent
                     StartQuizScreen()
                 }
