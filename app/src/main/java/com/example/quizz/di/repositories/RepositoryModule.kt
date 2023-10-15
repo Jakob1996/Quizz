@@ -1,8 +1,8 @@
 package com.example.quizz.di.repositories
 
 import com.example.quizz.data.networking.api.ApiService
-import com.example.quizz.data.repositories.UserRepositoryImpl
-import com.example.quizz.domain.repositories.UserRepository
+import com.example.quizz.data.repositories.QuizRepositoryImpl
+import com.example.quizz.domain.repositories.QuizRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,11 +11,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoriesModule {
+object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(apiService: ApiService): UserRepository{
-        return UserRepositoryImpl(apiService)
+    fun provideUserRepository(apiService: ApiService): QuizRepository{
+        return QuizRepositoryImpl(apiService)
     }
 }

@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StartQuizScreen() {
+fun StartQuizScreen(generateQuizClick: () -> Unit) {
     var topic by remember {
         mutableStateOf("")
     }
@@ -45,7 +45,7 @@ fun StartQuizScreen() {
 
         TopicTextField(text = topic, onValueChange = { top -> topic = top }, textLabel = "")
 
-        GenreButton({})
+        GenreButton(generateQuizClick)
 
     }
 }
@@ -84,5 +84,5 @@ fun TopicTextField(text: String, onValueChange: (String) -> Unit, textLabel: Str
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    StartQuizScreen()
+
 }

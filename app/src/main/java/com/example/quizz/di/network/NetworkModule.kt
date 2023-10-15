@@ -1,4 +1,4 @@
-package com.example.quizz.data.networking
+package com.example.quizz.di.network
 
 import com.example.quizz.data.networking.api.ApiService
 import dagger.Module
@@ -16,7 +16,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("my url")
+        .baseUrl("http://api.auroras.live/v1/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
