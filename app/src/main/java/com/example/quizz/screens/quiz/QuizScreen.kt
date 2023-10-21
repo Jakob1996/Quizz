@@ -1,4 +1,4 @@
-package com.example.quizz.screens
+package com.example.quizz.screens.quiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun QuizScreen() {
-
     Column(
         modifier = Modifier.fillMaxSize(), // Wypełnia całą dostępną przestrzeń
         verticalArrangement = Arrangement.Top, // Układa zawartość na górze
@@ -65,7 +64,7 @@ fun QuizButtons(
     fourthButtonClick: () -> Unit,
 ) {
     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Row() {
+        Row {
             OutlinedButton(
                 modifier = Modifier
                     .width(130.dp)
@@ -85,7 +84,7 @@ fun QuizButtons(
             }
         }
 
-        Row() {
+        Row {
             OutlinedButton(
                 modifier = Modifier
                     .width(130.dp)

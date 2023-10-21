@@ -1,6 +1,7 @@
 package com.example.quizz.di.viewModel
 
 import com.example.quizz.domain.useCases.QuizUseCase
+import com.example.quizz.screens.chat.ChatViewModel
 import com.example.quizz.ui.theme.screens.main.MainActivityViewModel
 import dagger.Module
 import dagger.Provides
@@ -16,5 +17,11 @@ object ViewModelModule {
     @ViewModelScoped
     fun provideMainActivityViewModel(quizUseCase: QuizUseCase): MainActivityViewModel {
         return MainActivityViewModel(quizUseCase)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideChatViewModel(): ChatViewModel {
+        return ChatViewModel()
     }
 }
