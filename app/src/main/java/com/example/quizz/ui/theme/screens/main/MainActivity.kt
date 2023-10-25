@@ -14,8 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quizz.screens.chat.ChatScreen
-import com.example.quizz.screens.quiz.QuizScreen
-import com.example.quizz.screens.generateQuiz.StartQuizScreen
+import com.example.quizz.screens.quiz.QuizViewModel
+import com.example.quizz.screens.quiz.quiz.QuizScreen
+import com.example.quizz.screens.quiz.generateQuiz.GenreQuizScreen
 import com.example.quizz.screens.startScreen.StartScreen
 import com.example.quizz.ui.theme.QuizzTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,39 +28,44 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: MainActivityViewModel = hiltViewModel()
+            val quizViewModel: QuizViewModel = hiltViewModel()
+
             QuizzTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     val nanController = rememberNavController()
-                    AppNavigator(navController = nanController)
+                    AppNavigator(navController = nanController, quizViewModel)
                 }
             }
         }
     }
 
     @Composable
-    fun AppNavigator(navController: NavHostController) {
+    fun AppNavigator(navController: NavHostController, quizViewModel: QuizViewModel) {
 
         NavHost(
             navController = navController,
             startDestination = Screens.StartScreen.route
         ) {
             composable(Screens.StartQuizScreen.route) {
-                StartQuizScreen { navController.navigate(route = Screens.QuizScreen.route) }
+                GenreQuizScreen(
+                    { navController.navigate(route = Screens.QuizScreen.route) },
+                    quizViewModel
+                )
             }
             composable(Screens.QuizScreen.route) {
-                QuizScreen()
+                QuizScreen(quizViewModel)
             }
             composable(Screens.ChatScreen.route) {
                 ChatScreen(name = "Jakob")
             }
 
             composable(Screens.StartScreen.route) {
-                StartScreen{
+                StartScreen {
                     when (it) {
-                        0 -> navController.navigate(route = Screens.QuizScreen.route)
+                        0 -> navController.navigate(route = Screens.StartQuizScreen.route)
                         1 -> navController.navigate(route = Screens.ChatScreen.route)
                     }
                 }

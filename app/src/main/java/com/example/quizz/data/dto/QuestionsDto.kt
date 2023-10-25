@@ -4,4 +4,4 @@ data class QuestionsDto(val questions: List<QuestionDto>)
 
 data class QuestionDto(val questionText: String, val answers: List<AnswerDto>)
 
-data class AnswerDto(val answerText: String, val isValid: Boolean)
+data class AnswerDto(val answerText: String, val isValid: Boolean, var userChoose: Boolean = false)

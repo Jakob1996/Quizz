@@ -40,16 +40,16 @@ fun StartScreen(clickable: (Int) -> Unit) {
             items(menuItems.size) { index ->
                 Box(
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, end = 6.dp, start = 6.dp)
                         .aspectRatio(1f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(25.dp))
                         .background(if (menuItems[index].name == "quiz") QuizDarkGreenColor else ChatLightGreenColor)
                         .clickable {
                             clickable(index)
                         },
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(text = menuItems.get(index).description, color = Color.White)
+                    Text(text = menuItems[index].description, color = Color.White)
                 }
             }
         })

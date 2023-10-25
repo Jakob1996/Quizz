@@ -5,5 +5,5 @@ import com.example.quizz.domain.model.resource.Resource
 
 interface QuizRepository {
 
-    suspend fun getQuestions(): Resource<QuestionsDto>
+    suspend fun genreQuiz(topic: String): Resource<QuestionsDto>
 }
