@@ -59,16 +59,16 @@ import com.example.quizz.ui.theme.PurpleGrey40
 import com.example.quizz.ui.theme.QuizDarkGreenColor
 
 @Composable
-fun QuizScreen(quizViewModel: QuizViewModel) {
+fun QuizScreen(quizViewModel: QuizViewModel, checkResultAction: () -> Unit) {
 
-//    val exampleQuestions = quizViewModel.questionsDto.collectAsState().value
+    val exampleQuestions = quizViewModel.questionsDto.collectAsState().value
 
     val progress by quizViewModel.progressState.collectAsState()
 
-    val exampleQuestions = getData()
+//    val exampleQuestions = getData()
 
     val answersForCurrent = exampleQuestions!!.questions[progress - 1].answers.map { it.answerText }
-    val currentAnswers = exampleQuestions!!.questions[progress - 1].answers
+    val currentAnswers = exampleQuestions.questions[progress - 1].answers
 
     var clicked by remember { mutableStateOf(false) }
 
@@ -83,15 +83,15 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp, top = 70.dp)
-                .padding(start = 10.dp, end = 10.dp),
-            contentAlignment = Alignment.CenterStart
+                .padding(start = 10.dp, end = 10.dp), contentAlignment = Alignment.CenterStart
         ) {
-            QuestionResponseText(exampleQuestions.questions[progress - 1].questionText ?: "")
+            QuestionResponseText(exampleQuestions.questions[progress - 1].questionText)
         }
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(200.dp)
                 .padding(20.dp)
                 .padding(start = 10.dp, end = 10.dp),
             contentAlignment = Alignment.CenterStart
@@ -106,18 +106,20 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        QuizBottomPanel(
-            {
-                if (progress > 1) {
-                    quizViewModel.changeProgress(-1)
-                }
-            },
-            {
-                if (progress < exampleQuestions.questions.size) {
-                    quizViewModel.changeProgress(1)
-                }
-            },
-        )
+        QuizBottomPanel({
+            if (progress > 1) {
+                quizViewModel.changeProgress(-1)
+            }
+        }, {
+            if (progress < exampleQuestions.questions.size) {
+                quizViewModel.changeProgress(1)
+            }
+        },
+
+            progress, exampleQuestions.questions.size, {
+                quizViewModel.setCheckResult(exampleQuestions)
+                checkResultAction()
+            })
     }
 }
 
@@ -128,23 +130,24 @@ fun Buttons(answers: List<AnswerDto>, onClick: () -> Unit, isClicked: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(20.dp)
             .background(Dark500)
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(2), state = state, content = {
             itemsIndexed(answers) { index, value ->
                 OutlinedButton(
                     modifier = Modifier
-                        .width(130.dp)
-                        .height(70.dp)
+                        .width(100.dp)
+                        .height(80.dp)
                         .padding(5.dp),
                     onClick = {
                         onClick()
                         answers.forEach { it.userChoose = false }
                         value.userChoose = true
                     },
-                    border = if (isClicked) {
+                    border = if (isClicked || isClicked.not()) {
                         if (value.userChoose) {
-                            BorderStroke(2.dp, Color.Green)
+                            BorderStroke(2.dp, Purple80)
                         } else {
                             BorderStroke(2.dp, Color.White)
                         }
@@ -194,7 +197,8 @@ fun ProgressBar(state: Int, questions: Int) {
         Row(
             modifier = Modifier
                 .widthIn(min = 30.dp)
-                .fillMaxWidth(), horizontalArrangement = Arrangement.End
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
             Text(text = "$state/$questions")
         }
@@ -228,7 +232,13 @@ fun ProgressBar(state: Int, questions: Int) {
 }
 
 @Composable
-fun QuizBottomPanel(previousButtonAction: () -> Unit, nextButtonAction: () -> Unit) {
+fun QuizBottomPanel(
+    previousButtonAction: () -> Unit,
+    nextButtonAction: () -> Unit,
+    currentQuiz: Int,
+    allQuizes: Int,
+    checkResultAction: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -247,8 +257,17 @@ fun QuizBottomPanel(previousButtonAction: () -> Unit, nextButtonAction: () -> Un
         }
 
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedButton(modifier = Modifier.width(150.dp), onClick = nextButtonAction) {
-                Text(modifier = Modifier.padding(10.dp), text = "Next", color = Color.White)
+            OutlinedButton(modifier = Modifier.width(150.dp), onClick = {
+                nextButtonAction()
+                if (currentQuiz == allQuizes) {
+                    checkResultAction()
+                }
+            }) {
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = if (currentQuiz == allQuizes) "Check" else "Next",
+                    color = Color.White
+                )
                 Icon(
                     imageVector = Icons.Rounded.ArrowForward,
                     contentDescription = "Previous",
@@ -258,60 +277,6 @@ fun QuizBottomPanel(previousButtonAction: () -> Unit, nextButtonAction: () -> Un
         }
     }
 }
-
-@Composable
-fun QuizButtons(
-    firstButtonClick: () -> Unit,
-    secondButtonClick: () -> Unit,
-    thirdButtonClick: () -> Unit,
-    fourthButtonClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row {
-            OutlinedButton(
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(70.dp)
-                    .padding(5.dp), onClick = firstButtonClick
-            ) {
-                Text("1", color = Color.White)
-            }
-
-            OutlinedButton(
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(70.dp)
-                    .padding(5.dp), onClick = secondButtonClick
-            ) {
-                Text("2", color = Color.White)
-            }
-        }
-
-        Row {
-            OutlinedButton(
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(70.dp)
-                    .padding(5.dp), onClick = thirdButtonClick
-            ) {
-                Text("3", color = Color.White)
-            }
-
-            OutlinedButton(
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(70.dp)
-                    .padding(5.dp), onClick = fourthButtonClick
-            ) {
-                Text("4", color = Color.White)
-            }
-        }
-    }
-}
-
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable

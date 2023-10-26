@@ -17,6 +17,7 @@ import com.example.quizz.screens.chat.ChatScreen
 import com.example.quizz.screens.quiz.QuizViewModel
 import com.example.quizz.screens.quiz.quiz.QuizScreen
 import com.example.quizz.screens.quiz.generateQuiz.GenreQuizScreen
+import com.example.quizz.screens.quiz.quizResult.QuizResultScreen
 import com.example.quizz.screens.startScreen.StartScreen
 import com.example.quizz.ui.theme.QuizzTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,12 +57,17 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screens.QuizScreen.route) {
-                QuizScreen(quizViewModel)
+                QuizScreen(
+                    quizViewModel
+                ) { navController.navigate(route = Screens.ResultQuizScreen.route) }
             }
             composable(Screens.ChatScreen.route) {
                 ChatScreen(name = "Jakob")
             }
 
+            composable(Screens.ResultQuizScreen.route) {
+                QuizResultScreen(quizViewModel)
+            }
             composable(Screens.StartScreen.route) {
                 StartScreen {
                     when (it) {
@@ -79,4 +85,5 @@ sealed class Screens(val route: String) {
     object QuizScreen : Screens("quizScreen")
     object ChatScreen : Screens("chatScreen")
     object StartScreen : Screens("startScreen")
+    object ResultQuizScreen : Screens("quizResultScreen")
 }

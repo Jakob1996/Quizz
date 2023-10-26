@@ -61,7 +61,6 @@ fun GenreQuizScreen(moveToQuiz: () -> Unit, quizViewModel: QuizViewModel) {
         TopicTextField(text = topic, onValueChange = { top -> topic = top }, textLabel = "")
 
         GenreButton({
-            moveToQuiz()
             if (topic.length > 1) {
                 quizViewModel.genreQuiz(topic)
                 setLoaderVisible(true)

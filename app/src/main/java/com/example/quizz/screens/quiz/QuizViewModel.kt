@@ -26,13 +26,29 @@ class QuizViewModel @Inject constructor(private val quizUseCase: QuizUseCase) : 
         _progressState.update { it + state }
     }
 
-    private val _playerResults: MutableStateFlow<List<QuizTemplate>?> = MutableStateFlow(null)
-    val playerResults = _progressState.asStateFlow()
+    private val _playerResults: MutableStateFlow<QuestionsDto?> = MutableStateFlow(null)
+    val playerResults = _playerResults.asStateFlow()
 
-
-    fun createTemplateForCurrentQuiz(quizList: List<QuizTemplate>) {
-        _playerResults.value = quizList
+    fun setCheckResult(currentState: QuestionsDto) {
+        _playerResults.value = currentState
     }
+
+    fun getUserResult(): String {
+        val questionsSize = playerResults.value?.questions?.size
+        var correctAnswers = 0
+        playerResults.value?.questions?.forEach { questionDto ->
+            questionDto.answers.forEach {
+                if (it.isValid) {
+                    if (it.isValid == it.userChoose) {
+                        correctAnswers += 1
+                    }
+                }
+            }
+        }
+
+        return "$correctAnswers / $questionsSize"
+    }
+
 
     private val _questionsDto: MutableStateFlow<QuestionsDto?> = MutableStateFlow(null)
     val questionsDto = _questionsDto.asStateFlow()
