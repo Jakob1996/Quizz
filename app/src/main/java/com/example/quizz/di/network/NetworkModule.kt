@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -39,6 +40,9 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)  // Timeout dla nawiązywania połączenia
+            .readTimeout(30, TimeUnit.SECONDS)     // Timeout dla odczytu danych
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -54,5 +58,6 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
-    private const val HEADER = "Basic ZGVmYXVsdC11c2VyOnNhZGZvaWozNGw1a2phc2RmbGsgajAzOTRqd2Fsc2lramRmO2xha3NkamYgLmFzZGZranpraiM="
+    private const val HEADER =
+        "Basic ZGVmYXVsdC11c2VyOnNhZGZvaWozNGw1a2phc2RmbGsgajAzOTRqd2Fsc2lramRmO2xha3NkamYgLmFzZGZranpraiM="
 }

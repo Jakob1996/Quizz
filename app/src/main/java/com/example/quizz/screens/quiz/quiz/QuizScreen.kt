@@ -99,7 +99,6 @@ fun QuizScreen(quizViewModel: QuizViewModel, checkResultAction: () -> Unit) {
             AnswerTextList(answersForCurrent)
         }
 
-
         Spacer(modifier = Modifier.weight(1f))  // Spacer nad QuizButtons
 
         Buttons(currentAnswers, onClick = { clicked = !clicked }, isClicked = clicked)
