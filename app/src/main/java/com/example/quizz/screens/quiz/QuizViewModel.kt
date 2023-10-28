@@ -27,7 +27,7 @@ class QuizViewModel @Inject constructor(private val quizUseCase: QuizUseCase) : 
     }
 
     private val _playerResults: MutableStateFlow<QuestionsDto?> = MutableStateFlow(null)
-    val playerResults = _playerResults.asStateFlow()
+    private val playerResults = _playerResults.asStateFlow()
 
     fun setCheckResult(currentState: QuestionsDto) {
         _playerResults.value = currentState
@@ -59,7 +59,20 @@ class QuizViewModel @Inject constructor(private val quizUseCase: QuizUseCase) : 
 
     fun genreQuiz(topic: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val quiz = quizUseCase.genreQuiz(topic)
+            val quiz = quizUseCase.genreQuizByTopic(topic)
+            if (quiz.isSuccess()) {
+                _questionsDto.value = quiz.value
+                _uiState.value = UiState.Success(quiz.status.name)
+            } else {
+                _uiState.value = UiState.Error(quiz.status.name)
+                Log.d("Error", "Something wrong ${quiz.error}")
+            }
+        }
+    }
+
+    fun createQuizByText(text: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            val quiz = quizUseCase.genreQuizByText(text)
             if (quiz.isSuccess()) {
                 _questionsDto.value = quiz.value
                 _uiState.value = UiState.Success(quiz.status.name)

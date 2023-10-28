@@ -1,34 +1,23 @@
-package com.example.quizz.screens.quiz.generateQuiz
+package com.example.quizz.screens.quiz.quizByText
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,10 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,15 +35,11 @@ import com.example.quizz.screens.quiz.QuizViewModel
 import com.example.quizz.ui.theme.Purple40
 
 @Composable
-fun GenreQuizScreen(
-    moveToQuiz: () -> Unit,
-    quizViewModel: QuizViewModel,
-    moveToGenreQuizByText: () -> Unit
-) {
+fun GenreQuizByTextScreen(moveToQuiz: () -> Unit, quizViewModel: QuizViewModel) {
     val (isLoaderVisible, setLoaderVisible) = remember { mutableStateOf(false) }
     val (isGenreButtonVisible, setGenreButtonVisible) = remember { mutableStateOf(true) }
 
-    var topic by remember {
+    var text by remember {
         mutableStateOf("")
     }
     val uiState by quizViewModel.uiState.collectAsState()
@@ -65,45 +48,23 @@ fun GenreQuizScreen(
 
     Column(
         modifier = Modifier.fillMaxSize(), // Wypełnia całą dostępną przestrzeń
-        verticalArrangement = Arrangement.Top, // Układa zawartość na górze
+        verticalArrangement = Arrangement.SpaceBetween, // Układa zawartość na górze
         horizontalAlignment = Alignment.CenterHorizontally, // Wyrównuje zawartość do lewej (opcjonalnie)
     ) {
+        Text(
+            text = "Genre your quiz", Modifier.padding(top = 30.dp)
+        )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .alpha(0f),
-                imageVector = Icons.Filled.Add,
-                contentDescription = null,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "Genre your quiz"
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures {
-                        moveToGenreQuizByText()
-                    }
-                },
-                imageVector = Icons.Outlined.List,
-                contentDescription = null,
-
-                )
-        }
-
-        TopicTextField(text = topic, onValueChange = { top -> topic = top }, textLabel = "")
+        TopicTextField(
+            text = text,
+            onValueChange = { top -> text = top },
+            textLabel = "",
+            Modifier.weight(1f)
+        )
 
         GenreButton({
-            if (topic.length > 1) {
-                quizViewModel.genreQuiz(topic)
+            if (text.length > 1) {
+                quizViewModel.createQuizByText(text)
                 setLoaderVisible(true)
                 setGenreButtonVisible(false)
             }
@@ -139,7 +100,7 @@ fun CheckState(uiState: QuizViewModel.UiState, moveToQuiz: () -> Unit, clearUiSt
 fun GenreButton(onClick: () -> Unit, isButtonVisible: Boolean) {
     Button(
         modifier = Modifier
-            .width(180.dp)
+            .wrapContentHeight()
             .height(90.dp)
             .padding(10.dp)
             .padding(top = 20.dp)
@@ -149,7 +110,7 @@ fun GenreButton(onClick: () -> Unit, isButtonVisible: Boolean) {
             Purple40// kolor tła przycisku
         )
     ) {
-        Text(text = "Generate quiz", color = Color.White)
+        Text(text = "Generate quiz from text", color = Color.White)
     }
 }
 
@@ -165,8 +126,6 @@ fun Loader(isLoaderVisible: Boolean) {
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
-
-
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -183,45 +142,34 @@ fun Loader(isLoaderVisible: Boolean) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TestFun() {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Moja aplikacja") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /* Akcja */ }) {
-                Icon(Icons.Default.Add, contentDescription = "Dodaj")
-            }
-        },
-        content = { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                Text("Treść główna")
-            }
-        }
-    )
-}
+fun TopicTextField(
+    text: String,
+    onValueChange: (String) -> Unit,
+    textLabel: String,
+    modifier: Modifier
+) {
 
-@Composable
-fun TopicTextField(text: String, onValueChange: (String) -> Unit, textLabel: String) {
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .padding(top = 25.dp),
-        value = text,
-        onValueChange = onValueChange,
-        label = { Text("Your topic") },
-        leadingIcon = {
-            val emailIcon = Icons.Filled.Add
-            Icon(imageVector = emailIcon, contentDescription = null)
-        }
-    )
+    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.TopStart) {
+        TextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(16.dp)
+                .padding(top = 25.dp),
+            value = text,
+            onValueChange = onValueChange,
+            label = { Text("Create quiz from text") },
+            leadingIcon = {
+                val emailIcon = Icons.Filled.Add
+                Icon(imageVector = emailIcon, contentDescription = null)
+            }
+        )
+    }
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun MainScreenPreview() {
+fun GenreQuizByTextScreenPreview() {
     Loader(true)
 }

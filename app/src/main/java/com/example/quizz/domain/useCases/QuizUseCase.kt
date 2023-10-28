@@ -8,7 +8,11 @@ import javax.inject.Inject
 
 class QuizUseCase @Inject constructor(private val quizRepository: QuizRepository) {
 
-    suspend fun genreQuiz(topic: String): Resource<QuestionsDto> {
-        return quizRepository.genreQuiz(topic)
+    suspend fun genreQuizByTopic(topic: String): Resource<QuestionsDto> {
+        return quizRepository.genreQuizByTopic(topic)
+    }
+
+    suspend fun genreQuizByText(topic: String): Resource<QuestionsDto> {
+        return quizRepository.genreQuizByTopic(topic)
     }
 }

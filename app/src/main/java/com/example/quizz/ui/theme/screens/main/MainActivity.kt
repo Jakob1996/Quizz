@@ -17,6 +17,7 @@ import com.example.quizz.screens.chat.ChatScreen
 import com.example.quizz.screens.quiz.QuizViewModel
 import com.example.quizz.screens.quiz.quiz.QuizScreen
 import com.example.quizz.screens.quiz.generateQuiz.GenreQuizScreen
+import com.example.quizz.screens.quiz.quizByText.GenreQuizByTextScreen
 import com.example.quizz.screens.quiz.quizResult.QuizResultScreen
 import com.example.quizz.screens.startScreen.StartScreen
 import com.example.quizz.ui.theme.QuizzTheme
@@ -53,7 +54,8 @@ class MainActivity : ComponentActivity() {
             composable(Screens.StartQuizScreen.route) {
                 GenreQuizScreen(
                     { navController.navigate(route = Screens.QuizScreen.route) },
-                    quizViewModel
+                    quizViewModel,
+                    { navController.navigate(route = Screens.GenreQuizByTextScreen.route) }
                 )
             }
             composable(Screens.QuizScreen.route) {
@@ -76,9 +78,16 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            composable(Screens.GenreQuizByTextScreen.route) {
+                GenreQuizByTextScreen(
+                    { navController.navigate(route = Screens.QuizScreen.route) },
+                    quizViewModel
+                )
+            }
         }
     }
 }
+
 
 sealed class Screens(val route: String) {
     object StartQuizScreen : Screens("startQuizScreen")
@@ -86,4 +95,5 @@ sealed class Screens(val route: String) {
     object ChatScreen : Screens("chatScreen")
     object StartScreen : Screens("startScreen")
     object ResultQuizScreen : Screens("quizResultScreen")
+    object GenreQuizByTextScreen : Screens("genreQuizByTextScreen")
 }
